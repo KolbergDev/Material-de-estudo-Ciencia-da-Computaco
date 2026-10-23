@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Protótipo E-commerce | Bootstrap</title>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Loja Fácil</a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#menuNavbar"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuNavbar">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Início</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#produtos">Produtos</a>
+            </li>
+          </ul>
+
+          <button
+            class="btn btn-outline-light"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#modalCarrinho"
+          >
+            Carrinho
+            <span id="contadorCarrinho" class="badge bg-danger rounded-pill"
+              >0</span
+            >
+          </button>
+        </div>
+      </div>
+    </nav>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+      <div id="toastCarrinho" class="toast" role="alert">
+        <div class="toast-header">
+          <strong class="me-auto">Loja Fácil</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
+        <div class="toast-body" id="toastMensagem">
+          Produto adicionado ao carrinho!
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalCarrinho" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Meu Carrinho</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <ul class="list-group mb-3" id="listaCarrinhoModal">
+              <li class="list-group-item text-muted" id="carrinhoVazio">
+                Seu carrinho está vazio.
+              </li>
+            </ul>
+
+            <p class="mb-1">
+              Total: <strong id="totalModalBruto">R$ 0.00</strong>
+            </p>
+            <p class="mb-0">
+              Com cupom "DESCONTO10":
+              <strong id="totalModalCupom">R$ 0.00</strong>
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Continuar Comprando
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="finalizarCompra()"
+            >
+              Finalizar Compra
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container my-5" id="produtos">
+      <h2 class="mb-4 text-center">Nossos Produtos</h2>
+
+      <div class="row g-4" id="listaProdutos"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const carrinho = [
+        { nome: "Camiseta", preco: 49.9, quantidade: 2 },
+        { nome: "Tênis", preco: 199.9, quantidade: 1 },
+        { nome: "Boné", preco: 29.9, quantidade: 3 },
+      ];
+
+      function exibirItens(carrinho) {
+        for (const item of carrinho) {
+          const subtotal = item.preco * item.quantidade;
+          console.log(
+            `${item.nome} - qtd: ${item.quantidade} - subtotal: R$ ${subtotal.toFixed(2)}`,
+          );
+        }
+      }
+
+      const calcularTotal = (carrinho) => {
+        let total = 0;
+        for (const item of carrinho) {
+          total += item.preco * item.quantidade;
+        }
+        return total;
+      };
+
+      function aplicarCupom(valorTotal, cupom) {
+        switch (cupom) {
+          case "DESCONTO10":
+            return valorTotal * 0.9;
+          case "MEGADESCONTO":
+            return valorTotal * 0.8;
+          default:
+            if (cupom) {
+              console.log("Cupom inválido, nenhum desconto aplicado.");
+            }
+            return valorTotal;
+        }
+      }
+
+      let itensNoCarrinho = [];
+      function renderizarProdutos() {
+        const container = document.getElementById("listaProdutos");
+
+        carrinho.forEach((item, index) => {
+          const card = `
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">${item.nome}</h5>
+                <p class="card-text mb-1">Preço unitário: R$ ${item.preco.toFixed(2)}</p>
+                <p class="card-text">Quantidade em estoque: ${item.quantidade}</p>
+                <button
+                  class="btn btn-primary mt-auto"
+                  onclick="adicionarAoCarrinho(${index})"
+                >
+                  Adicionar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+          container.innerHTML += card;
+        });
+      }
+
+      function adicionarAoCarrinho(index) {
+        const item = carrinho[index];
+        itensNoCarrinho.push(item);
+
+        document.getElementById("contadorCarrinho").textContent =
+          itensNoCarrinho.length;
+
+        document.getElementById("toastMensagem").textContent =
+          `${item.nome} adicionado ao carrinho!`;
+
+        const toast = new bootstrap.Toast(
+          document.getElementById("toastCarrinho"),
+        );
+        toast.show();
+        atualizarModalCarrinho();
+      }
+      function atualizarModalCarrinho() {
+        const lista = document.getElementById("listaCarrinhoModal");
+
+        if (itensNoCarrinho.length === 0) {
+          lista.innerHTML = `<li class="list-group-item text-muted">Seu carrinho está vazio.</li>`;
+        } else {
+          lista.innerHTML = "";
+          for (const item of itensNoCarrinho) {
+            lista.innerHTML += `
+            <li class="list-group-item d-flex justify-content-between">
+              <span>${item.nome}</span>
+              <span>R$ ${item.preco.toFixed(2)}</span>
+            </li>
+          `;
+          }
+        }
+        const totalBrutoModal = calcularTotal(itensNoCarrinho);
+        const totalComCupomModal = aplicarCupom(totalBrutoModal, "DESCONTO10");
+
+        document.getElementById("totalModalBruto").textContent =
+          `R$ ${totalBrutoModal.toFixed(2)}`;
+        document.getElementById("totalModalCupom").textContent =
+          `R$ ${totalComCupomModal.toFixed(2)}`;
+      }
+      function finalizarCompra() {
+        if (itensNoCarrinho.length === 0) {
+          alert(
+            "Seu carrinho está vazio! Adicione algum produto antes de finalizar.",
+          );
+          return;
+        }
+
+        const totalBrutoModal = calcularTotal(itensNoCarrinho);
+        const totalComCupomModal = aplicarCupom(totalBrutoModal, "DESCONTO10");
+
+        alert(
+          `Compra finalizada com sucesso!\nTotal a pagar: R$ ${totalComCupomModal.toFixed(2)}`,
+        );
+        itensNoCarrinho = [];
+        document.getElementById("contadorCarrinho").textContent = 0;
+        atualizarModalCarrinho();
+
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("modalCarrinho"),
+        );
+        modal.hide();
+      }
+
+      exibirItens(carrinho);
+
+      const valorTotal = calcularTotal(carrinho);
+      console.log(
+        `Total bruto (todos os produtos da loja): R$ ${valorTotal.toFixed(2)}`,
+      );
+
+      const valorFinal = aplicarCupom(valorTotal, "DESCONTO10");
+      console.log(
+        `Total com cupom (todos os produtos da loja): R$ ${valorFinal.toFixed(2)}`,
+      );
+
+      renderizarProdutos();
+    </script>
+  </body>
+</html>

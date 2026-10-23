@@ -1,0 +1,6 @@
+n1 = float(input('Insira a primeira nota: '))
+n2 = float(input('Insira a segunda nota: '))
+n3 = float(input('Insira a terceira nota: '))
+soma_notas = float(n1 + n2 + n3)
+media = float(soma_notas/3)
+print('Sua média foi: ', media)

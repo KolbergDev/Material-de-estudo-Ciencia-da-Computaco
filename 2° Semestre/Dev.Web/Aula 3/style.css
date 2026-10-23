@@ -1,0 +1,82 @@
+/* Define a fonte base da página usando fontes seguras
+   (fontes que quase todo sistema operacional já possui instaladas),
+   além das cores de fundo e de texto padrão do site.
+    */
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  background-color: #0b1e2d;
+  color: #eaf2f4;
+
+  /* Define a largura máxima e deixa centralizado horizontalmente
+     com margin: 0 auto, espaçamento interno e borda. */
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  border: 3px solid #2ea3c4;
+}
+
+header {
+  border-bottom: 2px solid #2ea3c4;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+h1 {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #4fd1e5;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+
+.subtitulo {
+  font-style: italic;
+  color: #a8c4cc;
+  margin-top: 0;
+}
+
+h2 {
+  font-family: "Helvetica", Arial, sans-serif;
+  color: #4fd1e5;
+  border-left: 4px solid #2ea3c4;
+  padding-left: 10px;
+}
+
+.menu {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 0 0;
+  gap: 25px;
+}
+
+.menu li {
+  background-color: #123245;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+/* Remove o sublinhado e troca a cor do link depois de clicado */
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: #4fd1e5;
+}
+
+a:visited {
+  color: #8a6fd1;
+}
+
+a:hover {
+  color: #ffb347;
+}
+
+main section {
+  margin-bottom: 35px;
+}
+
+p,
+li {
+  line-height: 1.6;
+}
